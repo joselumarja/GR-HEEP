@@ -21,6 +21,11 @@ filesets:
     - hw/gr-heep/gr_heep_peripherals.sv
     - hw/gr-heep/gr_heep.sv
     file_type: systemVerilogSource
+  
+  safa_rtl:
+    depend:
+    - x-heep::packages
+    - uclm:arco:safa
 
   # Simulation
   files_verilator_waiver:
@@ -196,6 +201,7 @@ targets:
   default: &default_target
     filesets:
     - files_rtl_generic
+    - safa_rtl
     - target_sim? (tool_verilator? (files_verilator_waiver))
     toplevel: [gr_heep]
 
@@ -248,6 +254,12 @@ targets:
           - '-CFLAGS "-Wall -fpermissive"'
           - '-LDFLAGS "-pthread -lutil -lelf"'
           - "-Wall"
+          - "-Wno-TIMESCALEMOD"
+          - "-Wno-STMTDLY"
+          - "-Wno-WIDTHTRUNC"
+          - "-Wno-WIDTHEXPAND"
+          - "-Wno-UNUSEDPARAM"
+          - "-Wno-UNUSEDSIGNAL"
       modelsim:
         vlog_options:
         - -override_timescale 1ns/1ps
