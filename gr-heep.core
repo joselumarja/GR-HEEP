@@ -260,6 +260,8 @@ targets:
           - "-Wno-WIDTHEXPAND"
           - "-Wno-UNUSEDPARAM"
           - "-Wno-UNUSEDSIGNAL"
+          - "-Wno-DECLFILENAME"
+          - "-Wno-PROCASSINIT"
       modelsim:
         vlog_options:
         - -override_timescale 1ns/1ps

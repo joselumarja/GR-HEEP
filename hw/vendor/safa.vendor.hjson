@@ -1,0 +1,15 @@
+// Copyright 2024 Politecnico di Torino
+// Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+{
+  name: "safa"
+  target_dir: "safa"
+
+  upstream: {
+    url: "https://github.com/joselumarja/SAFA.git"
+    rev: "main"
+  }
+
+  exclude_from_upstream: []
+}
