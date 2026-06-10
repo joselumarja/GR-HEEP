@@ -93,7 +93,7 @@ def config():
             fifo_depth=4,
             addr_mode="yes",
             subaddr_mode="yes",
-            hw_fifo_mode="yes",
+            hw_fifo_mode="no",
             zero_padding="yes",
         )
     )
@@ -162,7 +162,7 @@ def gr_heep_config():
     external_interrupts = 0
 
     #Channels allowed to conect hw_fifo streaming accelerators
-    hw_fifo_channels = [0]
+    hw_fifo_channels = []
 
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     # Do not modify below this line unless you know what you are doing
