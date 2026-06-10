@@ -271,7 +271,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
 
 
   // Performance Counter Signals
-  logic [31:0] [63:0]           mhpmcounter_q;                                  // Performance counters
+  logic [63:0]                  mhpmcounter_q[31:0];                            // Performance counters
   logic [31:0] [63:0]           mhpmcounter_n;                                  // Performance counters next value
   logic [31:0] [63:0]           mhpmcounter_rdata;                              // Performance counters next value
   logic [31:0] [1:0]            mhpmcounter_we;                                 // Performance counters write enable
@@ -535,7 +535,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       end
 
       CSR_DCSR: begin
-        if (DEBUG) begin
+        if (DEBUG != 0) begin
           csr_rdata_int = dcsr_rdata;
           illegal_csr_read = !ctrl_fsm_i.debug_mode;
         end else begin
@@ -545,7 +545,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       end
 
       CSR_DPC: begin
-        if (DEBUG) begin
+        if (DEBUG != 0) begin
           csr_rdata_int = dpc_rdata;
           illegal_csr_read = !ctrl_fsm_i.debug_mode;
         end else begin
@@ -555,7 +555,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       end
 
       CSR_DSCRATCH0: begin
-        if (DEBUG) begin
+        if (DEBUG != 0) begin
           csr_rdata_int = dscratch0_rdata;
           illegal_csr_read = !ctrl_fsm_i.debug_mode;
         end else begin
@@ -565,7 +565,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       end
 
       CSR_DSCRATCH1: begin
-        if (DEBUG) begin
+        if (DEBUG != 0) begin
           csr_rdata_int = dscratch1_rdata;
           illegal_csr_read = !ctrl_fsm_i.debug_mode;
         end else begin
@@ -1239,7 +1239,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
   );
 
   generate
-    if (DEBUG) begin : gen_debug_csr
+    if (DEBUG != 0) begin : gen_debug_csr
       cv32e40x_csr
       #(
         .WIDTH      (32),
@@ -1533,7 +1533,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
   assign priv_lvl_rdata     = PRIV_LVL_M;
 
   // dcsr_rdata factors in the flop outputs and the nmip bit from the controller
-  assign dcsr_rdata = DEBUG ? {dcsr_q[31:4], ctrl_fsm_i.pending_nmi, dcsr_q[2:0]} : 32'h0;
+  assign dcsr_rdata = (DEBUG != 0) ? {dcsr_q[31:4], ctrl_fsm_i.pending_nmi, dcsr_q[2:0]} : 32'h0;
 
 
   assign mcause_rdata = mcause_q;
@@ -1696,7 +1696,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
 
       end
       else begin: hpm_even_no_flop
-        assign hpm_events[hpm_idx] = hpm_events_raw[hpm_idx];
+        always_ff @(posedge clk) hpm_events[hpm_idx] <= hpm_events_raw[hpm_idx];
       end
     end
   endgenerate
@@ -1867,7 +1867,7 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       if( (cnt_gidx == 1) ||
           (cnt_gidx >= (NUM_MHPMCOUNTERS+3) ) )
         begin : gen_non_implemented
-        assign mhpmcounter_q[cnt_gidx] = 'b0;
+        always_ff @(posedge clk) mhpmcounter_q[cnt_gidx] <= 'b0;
       end
       else begin : gen_implemented
         always_ff @(posedge clk, negedge rst_n)
@@ -1894,11 +1894,11 @@ module cv32e40x_cs_registers import cv32e40x_pkg::*;
       if( (evt_gidx < 3) ||
           (evt_gidx >= (NUM_MHPMCOUNTERS+3) ) )
         begin : gen_non_implemented
-        assign mhpmevent_q[evt_gidx] = 'b0;
+        always_ff @(posedge clk) mhpmevent_q[evt_gidx] <= 'b0;
       end
       else begin : gen_implemented
         if (NUM_HPM_EVENTS < 32) begin : gen_tie_off
-             assign mhpmevent_q[evt_gidx][31:NUM_HPM_EVENTS] = 'b0;
+            always_ff @(posedge clk) mhpmevent_q[evt_gidx][31:NUM_HPM_EVENTS] <= 'b0;
         end
         always_ff @(posedge clk, negedge rst_n)
             if (!rst_n)

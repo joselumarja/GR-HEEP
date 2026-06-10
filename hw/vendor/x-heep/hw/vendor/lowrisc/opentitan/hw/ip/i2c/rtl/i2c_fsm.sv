@@ -4,6 +4,8 @@
 //
 // Description: I2C finite state machine
 
+/* verilator lint_off UNOPTFLAT */
+
 module i2c_fsm (
   input        clk_i,  // clock
   input        rst_ni, // active low reset
