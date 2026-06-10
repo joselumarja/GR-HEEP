@@ -26,10 +26,8 @@
 `include "register_interface/assign.svh"
 
 `define assert_condition(cond, rst_ni) \
-`ifndef VERILATOR \
 assert(^cond !== 1'bx | rst_ni !== 1'b1) \
-    else $error("Condition: %s = X in instance %m.", `"cond`") \
-`endif
+    else $error("Condition: %s = X in instance %m.", `"cond`")
 
 module gpio #(
   /// Data width of the reg_bus
@@ -160,7 +158,7 @@ module gpio #(
       assign gpio_out[gpio_idx] = s_reg2hw.gpio_out[gpio_idx].q;
       // Control gpio_tx_en_o depending on GPIO_MODE register value
       always_comb begin
-        `assert_condition(s_reg2hw.gpio_mode[gpio_idx], rst_ni);
+          `assert_condition(s_reg2hw.gpio_mode[gpio_idx], rst_ni);
         case (s_reg2hw.gpio_mode[gpio_idx])
           2'b00: begin //INPUT_ONLY
             gpio_tx_en_o[gpio_idx] = 1'b0;
@@ -188,8 +186,6 @@ module gpio #(
 
     // GPIO set, clear and toggle logic
     always_comb begin
-      s_hw2reg.gpio_out[gpio_idx].d = s_reg2hw.gpio_out[gpio_idx].q;
-      s_hw2reg.gpio_out[gpio_idx].de = 1'b0;
       unique if (s_reg2hw.gpio_set[gpio_idx].qe && s_reg2hw.gpio_set[gpio_idx].q) begin
         `assert_condition(s_reg2hw.gpio_set[gpio_idx].qe && s_reg2hw.gpio_set[gpio_idx].q, rst_ni);
         s_hw2reg.gpio_out[gpio_idx].d = 1'b1;

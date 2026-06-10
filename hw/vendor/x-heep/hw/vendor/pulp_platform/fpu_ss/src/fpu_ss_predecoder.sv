@@ -14,11 +14,11 @@
 
 
 module fpu_ss_predecoder #(
-    parameter int                       NumInstr               = 1
+    parameter int                       NumInstr               = 1,
+    parameter fpu_ss_pkg::offload_instr_t  OffloadInstr[NumInstr] = {0}
 ) (
     input  fpu_ss_pkg::acc_prd_req_t prd_req_i,
-    output fpu_ss_pkg::acc_prd_rsp_t prd_rsp_o,
-    input  fpu_ss_pkg::offload_instr_t  OffloadInstr[NumInstr]
+    output fpu_ss_pkg::acc_prd_rsp_t prd_rsp_o
 );
 
   import fpu_ss_pkg::*;
