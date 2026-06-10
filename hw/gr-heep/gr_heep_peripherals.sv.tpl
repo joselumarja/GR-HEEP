@@ -22,7 +22,7 @@
 
 module gr_heep_peripherals (
     input logic clk_i,
-    input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
+    input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
     
     % if (gr_heep["xbar_nmasters"] > 0):
         // External peripherals master ports
