@@ -367,8 +367,8 @@ module gr_heep (
       % endif
     );
   % endif
-  
-  % if gr_heep["periph_nslaves"] == 0:
+
+  % if not (gr_heep["periph_nslaves"] > 0):
     assign heep_peripheral_rsp = '0;
   % endif
 
