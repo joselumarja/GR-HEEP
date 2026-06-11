@@ -22,7 +22,11 @@
     hw_fifo = dma._hw_fifo_mode
 %>
 
-module gr_heep_peripherals (
+module gr_heep_peripherals 
+% if (hw_fifo):
+    import fifo_pkg::*;
+% endif
+(
     input logic clk_i,
     input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
     
@@ -61,7 +65,6 @@ module gr_heep_peripherals (
     % endif
 );
 
-import fifo_pkg::*;
 
   % if (xif and cpu.name == "cv32e20" ):
 
