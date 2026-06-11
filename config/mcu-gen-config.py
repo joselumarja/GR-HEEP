@@ -143,10 +143,10 @@ def gr_heep_config():
 
     # External peripherals
     ext_periph = {
-        #     "peripheral_0": {
-        #         "offset": 0x00000000,
-        #         "length": 0x00001000,
-        #     },
+             "SAFA": {
+                 "offset": 0x00000000,
+                 "length": 0x00001000,
+             }
         #     "peripheral_1": {
         #         "offset": 0x00001000,
         #         "length": 0x00001000,
@@ -160,6 +160,9 @@ def gr_heep_config():
     ao_spc_num = 1
 
     external_interrupts = 0
+
+    #Channels allowed to conect hw_fifo streaming accelerators
+    hw_fifo_channels = [0]
 
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     # Do not modify below this line unless you know what you are doing
@@ -206,6 +209,7 @@ def gr_heep_config():
         "slaves": slaves,
         "peripherals": peripherals,
         "ext_interrupts": external_interrupts,
+        "hw_fifo_channels": hw_fifo_channels
     }
 
     return kwargs

@@ -243,6 +243,7 @@ targets:
         mode: cc
         verilator_options:
           - '--cc'
+          - '--no-timing'
           - '--trace'
           - '--trace-fst'
           - '--trace-structs'

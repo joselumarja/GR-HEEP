@@ -3,4 +3,4 @@ x-heep/hw/core-v-mini-mcu/core_v_mini_mcu.sv
 
 *.lock.hjson
 
-safa
+safa/

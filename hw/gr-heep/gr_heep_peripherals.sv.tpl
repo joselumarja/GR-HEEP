@@ -18,6 +18,8 @@
     gr_heep = xheep.get_extension("gr-heep")
     xif = xheep.xif()
     cpu = xheep.cpu()
+    dma = xheep.get_base_peripheral_domain().get_dma()
+    hw_fifo = dma._hw_fifo_mode
 %>
 
 module gr_heep_peripherals (
@@ -27,22 +29,27 @@ module gr_heep_peripherals (
     % if (gr_heep["xbar_nmasters"] > 0):
         // External peripherals master ports
         output obi_pkg::obi_req_t  [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_req_o,
-        input obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_resp_i${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
+        input obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_resp_i${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["xbar_nslaves"] > 0):
         // External peripherals slave ports
         input obi_pkg::obi_req_t  [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_req_i,
-        output obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp_o${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
+        output obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp_o${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["periph_nslaves"] > 0):
         // External peripherals configuration ports
         input reg_pkg::reg_req_t gr_heep_peripheral_req_i,
-        output reg_pkg::reg_rsp_t gr_heep_peripheral_rsp_o${'' if ((gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
+        output reg_pkg::reg_rsp_t gr_heep_peripheral_rsp_o${'' if ((gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["ext_interrupts"] > 0):
         // External peripherals interrupt ports
         output logic [gr_heep_pkg::ExtInterrupts-1:0] gr_heep_peripheral_vec_int_o,
-        output logic     gr_heep_peripheral_int_o${'' if (xif is None) else ','}
+        output logic     gr_heep_peripheral_int_o${'' if (hw_fifo == 0) and (xif is None) else ','}
+    % endif
+    % if (hw_fifo):
+        input fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
+        output fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
+        output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_o${'' if (xif is None) else ','}
     % endif
     % if (xif):
         if_xif.coproc_compressed        xif_compressed_if,
@@ -53,6 +60,8 @@ module gr_heep_peripherals (
         if_xif.coproc_result            xif_result_if
     % endif
 );
+
+import fifo_pkg::*;
 
   % if (xif and cpu.name == "cv32e20" ):
 
@@ -119,6 +128,15 @@ module gr_heep_peripherals (
     assign xif_result_if.result.dbg     = '0;
   % endif
 
+  % if (hw_fifo):
+    % for i in range(dma._num_channels):
+        % if i not in gr_heep["hw_fifo_channels"]:
+            assign hw_fifo_rsp_o[${i}]  = '0;
+            assign hw_fifo_done_o[${i}] = '0;
+        % endif
+    % endfor
+  % endif
+
   % if (gr_heep["ext_interrupts"] > 0):
     logic [gr_heep_pkg::ExtInterrupts-1:0] gr_heep_peripheral_vec_int;
     assign gr_heep_peripheral_vec_int_o = gr_heep_peripheral_vec_int;
@@ -163,18 +181,19 @@ module gr_heep_peripherals (
 
     // Instantiate here the external peripherals
     % for a_slave in gr_heep["peripherals"]:
-        // % if (a_slave['name'] == "TestIp"):
-        //   // Test IP
-        //   test_ip test_ip_i (
-        //       .clk_i,
-        //       .rst_ni(rst_ni),
-        //       .reg_req_i(gr_heep_peripheral_req[gr_heep_pkg::TestIpPeriphIdx]),
-        //       .reg_rsp_o(gr_heep_peripheral_rsp[gr_heep_pkg::TestIpPeriphIdx]),
-        //       .read_req_i(gr_heep_slave_req_i[gr_heep_pkg::TestIpIdx]),
-        //       .read_resp_o(gr_heep_slave_resp_o[gr_heep_pkg::TestIpIdx]),
-        //       .gr_heep_peripheral_vec_int[0]
-        //   );
-        // % endif
+        % if (a_slave['name'] == "Safa"):
+            safa_wrapper #(
+                .FIFO_DEPTH(16)
+            ) streaming_accelerator (
+                .clk_i(clk_i),
+                .rst_ni(rst_ni),
+                .hw_fifo_req_i(hw_fifo_req_i[0]),
+                .hw_fifo_rsp_o(hw_fifo_rsp_o[0]),
+                .hw_fifo_done_o(hw_fifo_done_o[0])
+            );
+
+            assign gr_heep_peripheral_rsp = 0;
+        % endif
     % endfor
   % endif
 
