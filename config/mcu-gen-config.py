@@ -93,7 +93,7 @@ def config():
             fifo_depth=4,
             addr_mode="yes",
             subaddr_mode="yes",
-            hw_fifo_mode="no",
+            hw_fifo_mode="yes",
             zero_padding="yes",
         )
     )
