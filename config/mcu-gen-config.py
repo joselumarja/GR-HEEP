@@ -159,7 +159,7 @@ def gr_heep_config():
 
     ao_spc_num = 1
 
-    external_interrupts = 0
+    external_interrupts = 1
 
     #Channels allowed to conect hw_fifo streaming accelerators
     hw_fifo_channels = [0]

@@ -190,12 +190,14 @@ module gr_heep_peripherals
             ) streaming_accelerator (
                 .clk_i(clk_i),
                 .rst_ni(rst_ni),
+                .reg_req_i(gr_heep_peripheral_req[gr_heep_pkg::SafaPeriphIdx]),
+                .reg_rsp_o(gr_heep_peripheral_rsp[gr_heep_pkg::SafaPeriphIdx]),
                 .hw_fifo_req_i(hw_fifo_req_i[0]),
                 .hw_fifo_rsp_o(hw_fifo_rsp_o[0]),
-                .hw_fifo_done_o(hw_fifo_done_o[0])
+                .hw_fifo_done_o(hw_fifo_done_o[0]),
+                .safa_interrupt_o(gr_heep_peripheral_vec_int[0])
             );
 
-            assign gr_heep_peripheral_rsp = 0;
         % endif
     % endfor
   % endif
