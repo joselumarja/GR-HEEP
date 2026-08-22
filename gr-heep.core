@@ -259,6 +259,7 @@ targets:
           - "-Wno-STMTDLY"
           - "-Wno-WIDTHTRUNC"
           - "-Wno-WIDTHEXPAND"
+          - "-Wno-WIDTHXZEXPAND"
           - "-Wno-UNUSEDPARAM"
           - "-Wno-UNUSEDSIGNAL"
           - "-Wno-DECLFILENAME"
