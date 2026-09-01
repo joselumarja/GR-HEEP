@@ -1,0 +1,19 @@
+CAPI=2:
+
+name: uclm:arco:safa:1.0.0
+description: Streaming Accelerator FIFO Adapter
+
+filesets:
+  rtl:
+    depend:
+    - uclm:arco:hls_accelerator_component
+    files:
+    - rtl/safa_wrapper.sv
+    - rtl/sync_fifo_with_size_signal.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: 
+    filesets:
+    - rtl
+    toplevel: safa_wrapper

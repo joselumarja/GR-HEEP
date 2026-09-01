@@ -1,0 +1,122 @@
+#ifndef SAFA_REGS_H_
+#define SAFA_REGS_H_
+
+#include <stdint.h>
+
+/* Register offsets. */
+#define SAFA_CONTROL_REG_OFFSET           0x00u
+#define SAFA_CONFIG_REG_OFFSET            0x04u
+#define SAFA_STATUS_REG_OFFSET            0x08u
+#define SAFA_INPUT_WORDS_REG_OFFSET       0x0Cu
+#define SAFA_OUTPUT_WORDS_REG_OFFSET      0x10u
+#define SAFA_IN_FIFO_LEVEL_REG_OFFSET     0x14u
+#define SAFA_OUT_FIFO_LEVEL_REG_OFFSET    0x18u
+#define SAFA_IRQ_ENABLE_REG_OFFSET        0x1Cu
+#define SAFA_IRQ_STATUS_REG_OFFSET        0x20u
+#define SAFA_ERROR_STATUS_REG_OFFSET      0x24u
+#define SAFA_INPUT_ACCEPTED_REG_OFFSET    0x28u
+#define SAFA_INPUT_CONSUMED_REG_OFFSET    0x2Cu
+#define SAFA_OUTPUT_GENERATED_REG_OFFSET  0x30u
+#define SAFA_OUTPUT_POPPED_REG_OFFSET     0x34u
+#define SAFA_VERSION_REG_OFFSET           0x38u
+#define SAFA_ACTIVE_CYCLES_REG_OFFSET     0x3Cu
+#define SAFA_INPUT_STALLS_REG_OFFSET      0x40u
+#define SAFA_OUTPUT_STALLS_REG_OFFSET     0x44u
+#define SAFA_DMA_PUSH_STALLS_REG_OFFSET   0x48u
+#define SAFA_DMA_POP_STALLS_REG_OFFSET    0x4Cu
+
+/* CONTROL: write-one-pulse commands. */
+#define SAFA_CONTROL_START_BIT             0u
+#define SAFA_CONTROL_STOP_BIT              1u
+#define SAFA_CONTROL_SOFT_RESET_BIT        2u
+#define SAFA_CONTROL_CLEAR_DONE_BIT        3u
+#define SAFA_CONTROL_CLEAR_ERROR_BIT       4u
+#define SAFA_CONTROL_CLEAR_ABORTED_BIT     5u
+
+#define SAFA_CONTROL_START_MASK            (1u << SAFA_CONTROL_START_BIT)
+#define SAFA_CONTROL_STOP_MASK             (1u << SAFA_CONTROL_STOP_BIT)
+#define SAFA_CONTROL_SOFT_RESET_MASK       (1u << SAFA_CONTROL_SOFT_RESET_BIT)
+#define SAFA_CONTROL_CLEAR_DONE_MASK       (1u << SAFA_CONTROL_CLEAR_DONE_BIT)
+#define SAFA_CONTROL_CLEAR_ERROR_MASK      (1u << SAFA_CONTROL_CLEAR_ERROR_BIT)
+#define SAFA_CONTROL_CLEAR_ABORTED_MASK    (1u << SAFA_CONTROL_CLEAR_ABORTED_BIT)
+
+/* CONFIG. */
+#define SAFA_CONFIG_AUTO_START_BIT          0u
+#define SAFA_CONFIG_AUTO_START_MASK         (1u << SAFA_CONFIG_AUTO_START_BIT)
+
+/* STATUS. */
+#define SAFA_STATUS_IDLE_BIT                0u
+#define SAFA_STATUS_BUSY_BIT                1u
+#define SAFA_STATUS_DONE_BIT                2u
+#define SAFA_STATUS_ABORTED_BIT             3u
+#define SAFA_STATUS_ERROR_BIT               4u
+#define SAFA_STATUS_START_WAIT_BIT          5u
+#define SAFA_STATUS_RUNNING_BIT             6u
+#define SAFA_STATUS_DRAINING_BIT            7u
+#define SAFA_STATUS_AP_IDLE_BIT             8u
+#define SAFA_STATUS_AP_READY_BIT            9u
+#define SAFA_STATUS_AP_START_BIT           10u
+#define SAFA_STATUS_AP_DONE_BIT            11u
+#define SAFA_STATUS_IN_FIFO_EMPTY_BIT      12u
+#define SAFA_STATUS_IN_FIFO_FULL_BIT       13u
+#define SAFA_STATUS_OUT_FIFO_EMPTY_BIT     14u
+#define SAFA_STATUS_OUT_FIFO_FULL_BIT      15u
+#define SAFA_STATUS_AUTO_START_BIT         16u
+#define SAFA_STATUS_HLS_DONE_SEEN_BIT      17u
+#define SAFA_STATUS_STATE_OFFSET           24u
+#define SAFA_STATUS_STATE_MASK             0x7u
+
+#define SAFA_STATUS_IDLE_MASK              (1u << SAFA_STATUS_IDLE_BIT)
+#define SAFA_STATUS_BUSY_MASK              (1u << SAFA_STATUS_BUSY_BIT)
+#define SAFA_STATUS_DONE_MASK              (1u << SAFA_STATUS_DONE_BIT)
+#define SAFA_STATUS_ABORTED_MASK           (1u << SAFA_STATUS_ABORTED_BIT)
+#define SAFA_STATUS_ERROR_MASK             (1u << SAFA_STATUS_ERROR_BIT)
+#define SAFA_STATUS_START_WAIT_MASK        (1u << SAFA_STATUS_START_WAIT_BIT)
+#define SAFA_STATUS_RUNNING_MASK           (1u << SAFA_STATUS_RUNNING_BIT)
+#define SAFA_STATUS_DRAINING_MASK          (1u << SAFA_STATUS_DRAINING_BIT)
+#define SAFA_STATUS_AP_IDLE_MASK           (1u << SAFA_STATUS_AP_IDLE_BIT)
+#define SAFA_STATUS_AP_READY_MASK          (1u << SAFA_STATUS_AP_READY_BIT)
+#define SAFA_STATUS_AP_START_MASK          (1u << SAFA_STATUS_AP_START_BIT)
+#define SAFA_STATUS_AP_DONE_MASK           (1u << SAFA_STATUS_AP_DONE_BIT)
+#define SAFA_STATUS_IN_FIFO_EMPTY_MASK     (1u << SAFA_STATUS_IN_FIFO_EMPTY_BIT)
+#define SAFA_STATUS_IN_FIFO_FULL_MASK      (1u << SAFA_STATUS_IN_FIFO_FULL_BIT)
+#define SAFA_STATUS_OUT_FIFO_EMPTY_MASK    (1u << SAFA_STATUS_OUT_FIFO_EMPTY_BIT)
+#define SAFA_STATUS_OUT_FIFO_FULL_MASK     (1u << SAFA_STATUS_OUT_FIFO_FULL_BIT)
+#define SAFA_STATUS_AUTO_START_MASK        (1u << SAFA_STATUS_AUTO_START_BIT)
+#define SAFA_STATUS_HLS_DONE_SEEN_MASK     (1u << SAFA_STATUS_HLS_DONE_SEEN_BIT)
+
+/* State encoding mirrors safa_wrapper.sv. */
+#define SAFA_STATE_IDLE                    0u
+#define SAFA_STATE_START_WAIT              1u
+#define SAFA_STATE_RUNNING                 2u
+#define SAFA_STATE_DRAINING                3u
+#define SAFA_STATE_DONE                    4u
+#define SAFA_STATE_ABORT_RESET             5u
+
+/* IRQ_ENABLE and IRQ_STATUS. */
+#define SAFA_IRQ_DONE_BIT                  0u
+#define SAFA_IRQ_ABORTED_BIT               1u
+#define SAFA_IRQ_ERROR_BIT                 2u
+
+#define SAFA_IRQ_DONE_MASK                 (1u << SAFA_IRQ_DONE_BIT)
+#define SAFA_IRQ_ABORTED_MASK              (1u << SAFA_IRQ_ABORTED_BIT)
+#define SAFA_IRQ_ERROR_MASK                (1u << SAFA_IRQ_ERROR_BIT)
+#define SAFA_IRQ_ALL_MASK                  (SAFA_IRQ_DONE_MASK | \
+                                            SAFA_IRQ_ABORTED_MASK | \
+                                            SAFA_IRQ_ERROR_MASK)
+
+/* ERROR_STATUS. */
+#define SAFA_ERROR_START_WHILE_BUSY_MASK       (1u << 0)
+#define SAFA_ERROR_DMA_PUSH_BLOCKED_MASK       (1u << 1)
+#define SAFA_ERROR_DMA_POP_EMPTY_MASK          (1u << 2)
+#define SAFA_ERROR_HLS_READ_EMPTY_MASK         (1u << 3)
+#define SAFA_ERROR_HLS_WRITE_FULL_MASK         (1u << 4)
+#define SAFA_ERROR_UNEXPECTED_AP_DONE_MASK     (1u << 5)
+#define SAFA_ERROR_INPUT_COUNT_MISMATCH_MASK   (1u << 6)
+#define SAFA_ERROR_OUTPUT_COUNT_MISMATCH_MASK  (1u << 7)
+#define SAFA_ERROR_INPUT_FIFO_NOT_EMPTY_MASK   (1u << 8)
+#define SAFA_ERROR_ALL_MASK                    0x000001FFu
+
+#define SAFA_EXPECTED_VERSION                  0x00020000u
+
+#endif /* SAFA_REGS_H_ */
