@@ -255,6 +255,7 @@ targets:
           - '-CFLAGS "-Wall -fpermissive"'
           - '-LDFLAGS "-pthread -lutil -lelf"'
           - "-Wall"
+          - "-Wno-UNOPTFLAT"
           - "-Wno-TIMESCALEMOD"
           - "-Wno-STMTDLY"
           - "-Wno-WIDTHTRUNC"
