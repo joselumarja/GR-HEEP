@@ -74,6 +74,10 @@ typedef struct safa_counters {
     uint32_t output_stall_cycles;
     uint32_t dma_push_stall_cycles;
     uint32_t dma_pop_stall_cycles;
+    uint32_t input_fifo_empty_cycles;
+    uint32_t input_fifo_full_cycles;
+    uint32_t output_fifo_empty_cycles;
+    uint32_t output_fifo_full_cycles;
 } safa_counters_t;
 
 /**
@@ -115,7 +119,7 @@ safa_result_t safa_enable_irqs(safa_t *safa, uint32_t irq_mask);
 safa_result_t safa_disable_irqs(safa_t *safa, uint32_t irq_mask);
 safa_result_t safa_clear_irqs(safa_t *safa, uint32_t irq_mask);
 
-/** Read transaction counters and FIFO occupancy. */
+/** Read transaction counters, including FIFO-state cycles, and occupancy. */
 safa_result_t safa_get_counters(const safa_t *safa,
                                 safa_counters_t *counters);
 

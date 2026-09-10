@@ -38,8 +38,12 @@ module safa_wrapper #(
     localparam logic [11:0] REG_OUTPUT_STALLS    = 12'h044;
     localparam logic [11:0] REG_DMA_PUSH_STALLS  = 12'h048;
     localparam logic [11:0] REG_DMA_POP_STALLS   = 12'h04C;
+    localparam logic [11:0] REG_IN_FIFO_EMPTY_CYCLES  = 12'h050;
+    localparam logic [11:0] REG_IN_FIFO_FULL_CYCLES   = 12'h054;
+    localparam logic [11:0] REG_OUT_FIFO_EMPTY_CYCLES = 12'h058;
+    localparam logic [11:0] REG_OUT_FIFO_FULL_CYCLES  = 12'h05C;
 
-    localparam logic [31:0] SAFA_VERSION = 32'h0002_0000;
+    localparam logic [31:0] SAFA_VERSION = 32'h0002_0001;
 
     function automatic logic [31:0] merge_wstrb(
         input logic [31:0] old_value,
@@ -215,6 +219,8 @@ module safa_wrapper #(
     logic [31:0] output_words_generated_q, output_words_popped_q;
     logic [31:0] active_cycles_q, input_stall_cycles_q, output_stall_cycles_q;
     logic [31:0] dma_push_stall_cycles_q, dma_pop_stall_cycles_q;
+    logic [31:0] in_fifo_empty_cycles_q, in_fifo_full_cycles_q;
+    logic [31:0] out_fifo_empty_cycles_q, out_fifo_full_cycles_q;
     logic [31:0] input_consumed_effective, output_generated_effective;
     assign input_consumed_effective = input_words_consumed_q + input_read_accepted;
     assign output_generated_effective = output_words_generated_q + output_write_accepted;
@@ -226,6 +232,8 @@ module safa_wrapper #(
             active_cycles_q <= '0; input_stall_cycles_q <= '0;
             output_stall_cycles_q <= '0; dma_push_stall_cycles_q <= '0;
             dma_pop_stall_cycles_q <= '0;
+            in_fifo_empty_cycles_q <= '0; in_fifo_full_cycles_q <= '0;
+            out_fifo_empty_cycles_q <= '0; out_fifo_full_cycles_q <= '0;
         end else if (start_accepted) begin
             input_words_accepted_q <= state_q == SAFA_IDLE ?
                 in_fifo_size + input_push_accepted : 32'd0;
@@ -233,6 +241,8 @@ module safa_wrapper #(
             output_words_popped_q <= '0; active_cycles_q <= '0;
             input_stall_cycles_q <= '0; output_stall_cycles_q <= '0;
             dma_push_stall_cycles_q <= '0; dma_pop_stall_cycles_q <= '0;
+            in_fifo_empty_cycles_q <= '0; in_fifo_full_cycles_q <= '0;
+            out_fifo_empty_cycles_q <= '0; out_fifo_full_cycles_q <= '0;
         end else if (transaction_active) begin
             if (input_push_accepted) input_words_accepted_q <= input_words_accepted_q + 1;
             if (input_read_accepted) input_words_consumed_q <= input_words_consumed_q + 1;
@@ -245,6 +255,10 @@ module safa_wrapper #(
                 dma_push_stall_cycles_q <= dma_push_stall_cycles_q + 1;
             if (hw_fifo_req_i.pop && out_fifo_empty)
                 dma_pop_stall_cycles_q <= dma_pop_stall_cycles_q + 1;
+            if (in_fifo_empty) in_fifo_empty_cycles_q <= in_fifo_empty_cycles_q + 1;
+            if (in_fifo_full) in_fifo_full_cycles_q <= in_fifo_full_cycles_q + 1;
+            if (out_fifo_empty) out_fifo_empty_cycles_q <= out_fifo_empty_cycles_q + 1;
+            if (out_fifo_full) out_fifo_full_cycles_q <= out_fifo_full_cycles_q + 1;
         end
     end
 
@@ -334,6 +348,10 @@ module safa_wrapper #(
                 REG_OUTPUT_STALLS: reg_rsp_o.rdata = output_stall_cycles_q;
                 REG_DMA_PUSH_STALLS: reg_rsp_o.rdata = dma_push_stall_cycles_q;
                 REG_DMA_POP_STALLS: reg_rsp_o.rdata = dma_pop_stall_cycles_q;
+                REG_IN_FIFO_EMPTY_CYCLES: reg_rsp_o.rdata = in_fifo_empty_cycles_q;
+                REG_IN_FIFO_FULL_CYCLES: reg_rsp_o.rdata = in_fifo_full_cycles_q;
+                REG_OUT_FIFO_EMPTY_CYCLES: reg_rsp_o.rdata = out_fifo_empty_cycles_q;
+                REG_OUT_FIFO_FULL_CYCLES: reg_rsp_o.rdata = out_fifo_full_cycles_q;
                 default: begin reg_rsp_o.rdata = '0; reg_rsp_o.error = 1'b1; end
             endcase
         end

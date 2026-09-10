@@ -294,6 +294,14 @@ safa_result_t safa_get_counters(const safa_t *safa,
         safa_read32(safa, SAFA_DMA_PUSH_STALLS_REG_OFFSET);
     counters->dma_pop_stall_cycles =
         safa_read32(safa, SAFA_DMA_POP_STALLS_REG_OFFSET);
+    counters->input_fifo_empty_cycles =
+        safa_read32(safa, SAFA_IN_FIFO_EMPTY_CYCLES_REG_OFFSET);
+    counters->input_fifo_full_cycles =
+        safa_read32(safa, SAFA_IN_FIFO_FULL_CYCLES_REG_OFFSET);
+    counters->output_fifo_empty_cycles =
+        safa_read32(safa, SAFA_OUT_FIFO_EMPTY_CYCLES_REG_OFFSET);
+    counters->output_fifo_full_cycles =
+        safa_read32(safa, SAFA_OUT_FIFO_FULL_CYCLES_REG_OFFSET);
 
     return SAFA_RESULT_OK;
 }
