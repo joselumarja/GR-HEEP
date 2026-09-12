@@ -195,7 +195,20 @@ module gr_heep_peripherals
                 .hw_fifo_req_i(hw_fifo_req_i[0]),
                 .hw_fifo_rsp_o(hw_fifo_rsp_o[0]),
                 .hw_fifo_done_o(hw_fifo_done_o[0]),
-                .safa_interrupt_o(gr_heep_peripheral_vec_int[0])
+                .safa_interrupt_o(gr_heep_peripheral_vec_int[gr_heep_pkg::SafaPeriphIdx])
+            );
+
+        % endif
+
+        % if (a_slave['name'] == "ObiTrafficGenerator"):
+            traffic_generator ObiTrafficGenerator (
+                .clk_i(clk_i),
+                .rst_ni(rst_ni),
+                .reg_req_i(gr_heep_peripheral_req[gr_heep_pkg::ObiTrafficGeneratorPeriphIdx]),
+                .reg_rsp_o(gr_heep_peripheral_rsp[gr_heep_pkg::ObiTrafficGeneratorPeriphIdx]),
+                .obi_req_o(gr_heep_master_req_o[0]),
+                .obi_resp_i(gr_heep_master_resp_i[0]),
+                .interrupt_o(gr_heep_peripheral_vec_int[gr_heep_pkg::ObiTrafficGeneratorPeriphIdx])
             );
 
         % endif

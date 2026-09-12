@@ -1,0 +1,15 @@
+// Copyright 2024 Politecnico di Torino
+// Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+{
+  name: "OBI-traffic-generator"
+  target_dir: "OBI-traffic-generator"
+
+  upstream: {
+    url: "https://github.com/joselumarja/OBI-Traffic-Generator.git"
+    rev: "main"
+  }
+
+  exclude_from_upstream: []
+}

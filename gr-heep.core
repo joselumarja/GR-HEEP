@@ -26,6 +26,11 @@ filesets:
     depend:
     - x-heep::packages
     - uclm:arco:safa
+  
+  traffic-generator_rtl:
+    depend:
+    - x-heep::packages
+    - uclm:arco:traffic_generator
 
   # Simulation
   files_verilator_waiver:
@@ -202,6 +207,7 @@ targets:
     filesets:
     - files_rtl_generic
     - safa_rtl
+    - traffic-generator_rtl
     - target_sim? (tool_verilator? (files_verilator_waiver))
     toplevel: [gr_heep]
 

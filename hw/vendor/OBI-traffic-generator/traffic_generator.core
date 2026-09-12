@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: uclm:arco:traffic_generator:1.0.0
+description: Register-controlled OBI traffic generator
+
+filesets:
+  rtl:
+    depend:
+    - x-heep::packages
+    files:
+    - rtl/traffic_generator.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+    - rtl
+    toplevel: traffic_generator

@@ -127,7 +127,7 @@ def config():
 
 def gr_heep_config():
 
-    ext_xbar_nmasters = 0
+    ext_xbar_nmasters = 1
 
     # External slaves memory map
     ext_xbar_slaves = {
@@ -146,11 +146,11 @@ def gr_heep_config():
              "SAFA": {
                  "offset": 0x00000000,
                  "length": 0x00001000,
+             },
+             "OBI_Traffic_Generator": {
+                 "offset": 0x00001000,
+                 "length": 0x00001000,
              }
-        #     "peripheral_1": {
-        #         "offset": 0x00001000,
-        #         "length": 0x00001000,
-        #     },
         #     "peripheral_2": {
         #         "offset": 0x00003000,
         #         "length": 0x00001000,
