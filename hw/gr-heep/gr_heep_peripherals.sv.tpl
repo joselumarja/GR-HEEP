@@ -23,9 +23,6 @@
 %>
 
 module gr_heep_peripherals 
-% if (hw_fifo):
-    import fifo_pkg::*;
-% endif
 (
     input logic clk_i,
     input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
@@ -51,8 +48,8 @@ module gr_heep_peripherals
         output logic     gr_heep_peripheral_int_o${'' if (not hw_fifo) and (xif is None) else ','}
     % endif
     % if (hw_fifo):
-        input fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
-        output fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
+        input xheep_fifo_pkg::xheep_fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
+        output xheep_fifo_pkg::xheep_fifo_rsp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
         output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_o${'' if (xif is None) else ','}
     % endif
     % if (xif):
