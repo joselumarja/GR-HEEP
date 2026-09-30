@@ -19,40 +19,37 @@
     xif = xheep.xif()
     cpu = xheep.cpu()
     dma = xheep.get_base_peripheral_domain().get_dma()
-    hw_fifo = dma._hw_fifo_mode
+    hw_fifo = (dma._hw_fifo_mode == 1) and (len(gr_heep["hw_fifo_channels"])>0)
 %>
 
 module gr_heep_peripherals 
-% if (hw_fifo):
-    import fifo_pkg::*;
-% endif
 (
     input logic clk_i,
-    input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+    input logic rst_ni${'' if ((gr_heep["xbar_nmasters"] + gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
     
     % if (gr_heep["xbar_nmasters"] > 0):
         // External peripherals master ports
-        output obi_pkg::obi_req_t  [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_req_o,
-        input obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_resp_i${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+        output xheep_obi_pkg::xheep_obi_req_t  [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_req_o,
+        input xheep_obi_pkg::xheep_obi_rsp_t [gr_heep_pkg::ExtXbarNMasterRnd-1:0] gr_heep_master_resp_i${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["xbar_nslaves"] > 0):
         // External peripherals slave ports
-        input obi_pkg::obi_req_t  [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_req_i,
-        output obi_pkg::obi_resp_t [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp_o${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+        input xheep_obi_pkg::xheep_obi_req_t  [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_req_i,
+        output xheep_obi_pkg::xheep_obi_rsp_t [gr_heep_pkg::ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp_o${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["periph_nslaves"] > 0):
         // External peripherals configuration ports
-        input reg_pkg::reg_req_t gr_heep_peripheral_req_i,
-        output reg_pkg::reg_rsp_t gr_heep_peripheral_rsp_o${'' if ((gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+        input xheep_reg_pkg::xheep_reg_req_t gr_heep_peripheral_req_i,
+        output xheep_reg_pkg::xheep_reg_rsp_t gr_heep_peripheral_rsp_o${'' if ((gr_heep["ext_interrupts"] == 0) and (xif is None)) else ','}
     % endif
     % if (gr_heep["ext_interrupts"] > 0):
         // External peripherals interrupt ports
         output logic [gr_heep_pkg::ExtInterrupts-1:0] gr_heep_peripheral_vec_int_o,
-        output logic     gr_heep_peripheral_int_o${'' if (hw_fifo == 0) and (xif is None) else ','}
+        output logic     gr_heep_peripheral_int_o${'' if (not hw_fifo) and (xif is None) else ','}
     % endif
     % if (hw_fifo):
-        input fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
-        output fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
+        input xheep_fifo_pkg::xheep_fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
+        output xheep_fifo_pkg::xheep_fifo_rsp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
         output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_o${'' if (xif is None) else ','}
     % endif
     % if (xif):
@@ -147,8 +144,8 @@ module gr_heep_peripherals
   % endif
 
   % if (gr_heep["periph_nslaves"] > 0):
-    reg_pkg::reg_req_t [gr_heep_pkg::ExtPeriphNSlaveRnd-1:0] gr_heep_peripheral_req;
-    reg_pkg::reg_rsp_t [gr_heep_pkg::ExtPeriphNSlaveRnd-1:0] gr_heep_peripheral_rsp;
+    xheep_reg_pkg::xheep_reg_req_t [gr_heep_pkg::ExtPeriphNSlaveRnd-1:0] gr_heep_peripheral_req;
+    xheep_reg_pkg::xheep_reg_rsp_t [gr_heep_pkg::ExtPeriphNSlaveRnd-1:0] gr_heep_peripheral_rsp;
 
     logic [gr_heep_pkg::LogExtPeriphNSlave-1:0] ext_periph_select;
 
@@ -170,8 +167,8 @@ module gr_heep_peripherals
 
     reg_demux #(
         .NoPorts(gr_heep_pkg::ExtPeriphNSlaveRnd),
-        .req_t  (reg_pkg::reg_req_t),
-        .rsp_t  (reg_pkg::reg_rsp_t)
+        .req_t  (xheep_reg_pkg::xheep_reg_req_t),
+        .rsp_t  (xheep_reg_pkg::xheep_reg_rsp_t)
     ) reg_demux_i (
         .clk_i,
         .rst_ni,

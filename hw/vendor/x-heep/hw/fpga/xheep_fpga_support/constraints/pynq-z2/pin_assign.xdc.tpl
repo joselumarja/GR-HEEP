@@ -25,7 +25,6 @@ set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_out_OBUF]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_led_OBUF]
 
 # Switches
-set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS33} [get_ports execute_from_flash_i]
 set_property -dict {PACKAGE_PIN M20 IOSTANDARD LVCMOS33} [get_ports boot_select_i]
 
 # FLASH
@@ -109,7 +108,7 @@ set_property -dict {PACKAGE_PIN R17 IOSTANDARD LVCMOS33} [get_ports {spi2_sd_io[
 
 set_property -dict {PACKAGE_PIN Y17 IOSTANDARD LVCMOS33} [get_ports {ddr_rcv_clk_i}] ; # rpi_gpio_tri_io[17]
 set_property -dict {PACKAGE_PIN F20 IOSTANDARD LVCMOS33} [get_ports {ddr_snd_clk_o}] ; # rpi_gpio_tri_io[11]
-% if user_peripheral_domain.contains_peripheral('serial_link'):
+% if user_peripheral_domain.contains_peripheral('serial_link_reg'):
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ddr_rcv_clk_i_IBUF]
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ddr_snd_clk_o_OBUF]
 %endif

@@ -4,7 +4,7 @@ CAPI=2:
 # Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
-name: openhwgroup.org:systems:core-v-mini-mcu:1.0.5
+name: openhwgroup.org:systems:core-v-mini-mcu:1.0.6
 description: CORE-V MINI-MCU Top.
 
 filesets:
@@ -16,19 +16,16 @@ filesets:
     - openhwgroup:cve2:cve2_top
     - pulp-platform.org:ip:gpio
     - pulp-platform.org::common_cells
-    - pulp-platform.org::axi:0.39.8
+    - pulp-platform.org::axi:0.39.9
     - pulp-platform.org::riscv_dbg
     - pulp-platform.org::register_interface
-    - pulp-platform.org::serial_link
     - openhwgroup.org:ip:soc_ctrl
     - lowrisc:ip:uart:0.1
     - lowrisc:ip:rv_plic_example:0.1
     - lowrisc:ip:rv_timer:0.1
     - lowrisc:ip:spi_host:1.0
     - lowrisc:ip:i2c:0.1
-    - yosyshq:picorv32_spimemio:0-r1
     - x-heep:ip:cv32e40px
-    - x-heep:obi_spimemio:0.1.0
     - x-heep:ip:boot_rom
     - x-heep:ip:dma
     - x-heep:ip:dma_subsystem
@@ -83,16 +80,13 @@ filesets:
     files:
     - hw/core-v-mini-mcu/core_v_mini_mcu.vlt
     - hw/ip/soc_ctrl/soc_ctrl.vlt
-    - hw/ip/boot_rom/boot_rom.vlt
-    - hw/ip/obi_spimemio/obi_spimemio.vlt
     - hw/ip/dma_subsystem/dma_subsystem.vlt
     - hw/ip/pdm2pcm/pdm2pcm.vlt
-    - hw/ip_examples/pdm2pcm_dummy/pdm2pcm_dummy.vlt
     - hw/ip/power_manager/power_manager.vlt
     - hw/ip/fast_intr_ctrl/fast_intr_ctrl.vlt
+    - hw/ip/serial_link_xheep_wrapper/serial_link_xheep_wrapper.vlt
     - hw/system/pad_control/pad_control.vlt
     - hw/system/x_heep_system.vlt
-    - hw/ip/serial_link_xheep_wrapper/serial_link_xheep_wrapper.vlt
     file_type: vlt
 
   rtl-fpga:
@@ -392,6 +386,9 @@ targets:
           - '-CFLAGS "-Wall -fpermissive"'
           - '-LDFLAGS "-pthread -lutil -lelf"'
           - "-Wall"
+        make_options:
+          # Use the number of available cores (up to a max of 8) for parallel compilation, with a fallback to 4 if nproc is not available
+          - '-j$(shell N=$$(nproc 2>/dev/null || echo 4); [ "$$N" -le 8 ] && echo "$$N" || echo 8)'
 
   sim_sc:
     <<: *default_target
@@ -409,6 +406,8 @@ targets:
     - USE_UPF
     - REMOVE_OBI_FIFO
     - SIM_SYSTEMC=true
+    - COMMON_CELLS_ASSERTS_OFF
+    - ASSERTS_OFF
     hooks:
       pre_run:
         - remove_uart_log
@@ -420,14 +419,13 @@ targets:
         verilator_options:
           - '--sc'
           - '--trace'
-          - '--trace-fst'
           - '--trace-structs'
           - '--trace-params'
           - '--trace-max-array 1024'
           - '--x-assign unique'
           - '--x-initial unique'
           - '--exe tb_sc_top.cpp'
-          - '-CFLAGS "-Wall -fpermissive"'
+          - '-CFLAGS "-Wall -std=c++14 -fpermissive"'
           - '-LDFLAGS "-pthread -lutil -lelf"'
           - "-Wall"
 

@@ -15,7 +15,7 @@
     gr_heep = xheep.get_extension("gr-heep")
     xif = xheep.xif()
     dma = xheep.get_base_peripheral_domain().get_dma()
-    hw_fifo = dma._hw_fifo_mode
+    hw_fifo = (dma._hw_fifo_mode == 1) and (len(gr_heep["hw_fifo_channels"])>0)
 %>
 module gr_heep (
     // X-HEEP interface
@@ -39,9 +39,9 @@ module gr_heep (
       % endif
     % endfor
 );
-  import obi_pkg::*;
-  import reg_pkg::*;
-  import fifo_pkg::*;
+  import xheep_obi_pkg::*;
+  import xheep_reg_pkg::*;
+  import xheep_fifo_pkg::*;
   import gr_heep_pkg::*;
   import core_v_mini_mcu_pkg::*;
 
@@ -60,20 +60,20 @@ module gr_heep (
   logic [31:0] exit_value;
 
   // X-HEEP external master ports
-  obi_req_t  heep_core_instr_req;
-  obi_resp_t heep_core_instr_rsp;
-  obi_req_t  heep_core_data_req;
-  obi_resp_t heep_core_data_rsp;
-  obi_req_t  heep_debug_master_req;
-  obi_resp_t heep_debug_master_rsp;
-  obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req;
-  obi_resp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_rsp;
-  obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req;
-  obi_resp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_rsp;
-  obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req;
-  obi_resp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_rsp;
-  fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req;
-  fifo_resp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp;
+  xheep_obi_req_t  heep_core_instr_req;
+  xheep_obi_rsp_t heep_core_instr_rsp;
+  xheep_obi_req_t  heep_core_data_req;
+  xheep_obi_rsp_t heep_core_data_rsp;
+  xheep_obi_req_t  heep_debug_master_req;
+  xheep_obi_rsp_t heep_debug_master_rsp;
+  xheep_obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_req;
+  xheep_obi_rsp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_read_rsp;
+  xheep_obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_req;
+  xheep_obi_rsp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_write_rsp;
+  xheep_obi_req_t  [DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_req;
+  xheep_obi_rsp_t [DMA_NUM_MASTER_PORTS-1:0] heep_dma_addr_rsp;
+  xheep_fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req;
+  xheep_fifo_rsp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp;
   logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done;
 
   // External DMA slots
@@ -82,22 +82,22 @@ module gr_heep (
   logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] dma_done;
 
   // X-HEEP slave ports
-  obi_req_t  [ExtXbarNmasterRnd-1:0] heep_slave_req;
-  obi_resp_t [ExtXbarNmasterRnd-1:0] heep_slave_rsp;
+  xheep_obi_req_t  [ExtXbarNmasterRnd-1:0] heep_slave_req;
+  xheep_obi_rsp_t [ExtXbarNmasterRnd-1:0] heep_slave_rsp;
 
   % if (gr_heep["xbar_nslaves"] > 0):
     // External slave ports
-    obi_req_t  [ExtXbarNSlaveRnd-1:0] gr_heep_slave_req;
-    obi_resp_t [ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp;
+    xheep_obi_req_t  [ExtXbarNSlaveRnd-1:0] gr_heep_slave_req;
+    xheep_obi_rsp_t [ExtXbarNSlaveRnd-1:0] gr_heep_slave_resp;
   % endif
 
   // External master ports
-  obi_req_t  [ExtXbarNmasterRnd-1:0] gr_heep_master_req;
-  obi_resp_t [ExtXbarNmasterRnd-1:0] gr_heep_master_resp;
+  xheep_obi_req_t  [ExtXbarNmasterRnd-1:0] gr_heep_master_req;
+  xheep_obi_rsp_t [ExtXbarNmasterRnd-1:0] gr_heep_master_resp;
 
   // X-HEEP external peripheral master ports
-  reg_req_t heep_peripheral_req;
-  reg_rsp_t heep_peripheral_rsp;
+  xheep_reg_req_t heep_peripheral_req;
+  xheep_reg_rsp_t heep_peripheral_rsp;
 
   // Interrupt vector
   logic [core_v_mini_mcu_pkg::NEXT_INT-1:0] ext_int_vector;
@@ -110,13 +110,13 @@ module gr_heep (
   logic peripheral_subsystem_powergate_switch_ack_n;
 
   // External SPC interface signals
-  reg_req_t [AoSPCNum-1:0] ext_ao_peripheral_req;
-  reg_rsp_t  [AoSPCNum-1:0] ext_ao_peripheral_resp;
+  xheep_reg_req_t [AoSPCNum-1:0] ext_ao_peripheral_req;
+  xheep_reg_rsp_t  [AoSPCNum-1:0] ext_ao_peripheral_resp;
   
 
   // PAD controller
-  reg_req_t pad_req;
-  reg_rsp_t pad_rsp;
+  xheep_reg_req_t pad_req;
+  xheep_reg_rsp_t pad_rsp;
   % if attribute_bits != None:
     logic [core_v_mini_mcu_pkg::NUM_PAD-1:0][${attribute_bits}] pad_attributes;
   % endif
@@ -334,19 +334,34 @@ module gr_heep (
       % if (gr_heep["xbar_nmasters"] > 0):
         % if (gr_heep["xbar_nslaves"] > 0):
           .gr_heep_master_req_o(gr_heep_master_req),
+<<<<<<< HEAD
           .gr_heep_master_resp_i(gr_heep_master_resp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
         % else:
           .gr_heep_master_req_o(heep_slave_req),
           .gr_heep_master_resp_i(heep_slave_rsp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+=======
+          .gr_heep_master_resp_i(gr_heep_master_resp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
+        % else:
+          .gr_heep_master_req_o(heep_slave_req),
+          .gr_heep_master_resp_i(heep_slave_rsp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
+>>>>>>> origin/main
         % endif
       % endif
       % if (gr_heep["xbar_nslaves"] > 0):
         .gr_heep_slave_req_i(gr_heep_slave_req),
+<<<<<<< HEAD
         .gr_heep_slave_resp_o(gr_heep_slave_resp)${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
       % endif
       % if (gr_heep["periph_nslaves"] > 0):
         .gr_heep_peripheral_req_i(heep_peripheral_req),
         .gr_heep_peripheral_rsp_o(heep_peripheral_rsp)${'' if ((gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
+=======
+        .gr_heep_slave_resp_o(gr_heep_slave_resp)${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
+      % endif
+      % if (gr_heep["periph_nslaves"] > 0):
+        .gr_heep_peripheral_req_i(heep_peripheral_req),
+        .gr_heep_peripheral_rsp_o(heep_peripheral_rsp)${'' if ((gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
+>>>>>>> origin/main
       % endif
       % if (gr_heep["ext_interrupts"] > 0):
         .gr_heep_peripheral_vec_int_o(ext_int_vector[${gr_heep["ext_interrupts"]-1}:0]),
@@ -367,12 +382,21 @@ module gr_heep (
       % endif
     );
   % endif
+<<<<<<< HEAD
   
   % if gr_heep["periph_nslaves"] == 0:
     assign heep_peripheral_rsp = '0;
   % endif
 
   % if hw_fifo == 0:
+=======
+
+  % if not (gr_heep["periph_nslaves"] > 0):
+    assign heep_peripheral_rsp = '0;
+  % endif
+
+  % if not hw_fifo:
+>>>>>>> origin/main
     assign hw_fifo_done = '0;
     assign hw_fifo_rsp = '0;
   % endif
@@ -470,8 +494,8 @@ module gr_heep (
   // Pad control
   // -----------
   pad_control #(
-    .reg_req_t (reg_req_t),
-    .reg_rsp_t (reg_rsp_t),
+    .reg_req_t (xheep_reg_pkg::xheep_reg_req_t),
+    .reg_rsp_t (xheep_reg_pkg::xheep_reg_rsp_t),
     .NUM_PAD   (NUM_PAD)
   ) pad_control_i (
     .clk_i            (clk_in_x),

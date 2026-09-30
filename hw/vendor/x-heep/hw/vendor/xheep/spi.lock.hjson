@@ -9,6 +9,6 @@
   upstream:
   {
     url: https://github.com/x-heep/xheep_spi.git
-    rev: d5b4401ab8b5e85d51af5fb9e9f69fb5dbe86519
+    rev: 21d645942155ac3f56bd72dd6c21fdc565b00b5f
   }
 }
