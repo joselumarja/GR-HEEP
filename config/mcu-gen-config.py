@@ -255,9 +255,6 @@ def gr_heep_config():
     #Channels allowed to conect hw_fifo streaming accelerators
     hw_fifo_channels = [0]
 
-    # Channels allowed to connect hw_fifo streaming accelerators
-    hw_fifo_channels = []
-
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     # Do not modify below this line unless you know what you are doing
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
