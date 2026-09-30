@@ -4,10 +4,10 @@ module safa_wrapper #(
 ) (
     input  logic clk_i,
     input  logic rst_ni,
-    input  reg_pkg::reg_req_t reg_req_i,
-    output reg_pkg::reg_rsp_t reg_rsp_o,
-    input  fifo_pkg::fifo_req_t  hw_fifo_req_i,
-    output fifo_pkg::fifo_resp_t hw_fifo_rsp_o,
+    input  xheep_reg_pkg::xheep_reg_req_t reg_req_i,
+    output xheep_reg_pkg::xheep_reg_rsp_t reg_rsp_o,
+    input  xheep_fifo_pkg::xheep_fifo_req_t  hw_fifo_req_i,
+    output xheep_fifo_pkg::xheep_fifo_rsp_t hw_fifo_rsp_o,
     output logic                 hw_fifo_done_o,
     output logic                 safa_interrupt_o
 );

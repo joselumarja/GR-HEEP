@@ -6,6 +6,7 @@ description: Streaming Accelerator FIFO Adapter
 filesets:
   rtl:
     depend:
+    - x-heep::packages
     - uclm:arco:hls_accelerator_component
     files:
     - rtl/safa_wrapper.sv

@@ -1,10 +1,10 @@
 module traffic_generator (
     input  logic               clk_i,
     input  logic               rst_ni,
-    input  reg_pkg::reg_req_t  reg_req_i,
-    output reg_pkg::reg_rsp_t  reg_rsp_o,
-    output obi_pkg::obi_req_t  obi_req_o,
-    input  obi_pkg::obi_resp_t obi_resp_i,
+    input  xheep_reg_pkg::xheep_reg_req_t  reg_req_i,
+    output xheep_reg_pkg::xheep_reg_rsp_t  reg_rsp_o,
+    output xheep_obi_pkg::xheep_obi_req_t  obi_req_o,
+    input  xheep_obi_pkg::xheep_obi_rsp_t obi_resp_i,
     output logic               interrupt_o
 );
 

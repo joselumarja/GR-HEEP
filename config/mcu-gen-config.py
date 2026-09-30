@@ -303,7 +303,7 @@ def gr_heep_config():
         "slaves": slaves,
         "peripherals": peripherals,
         "ext_interrupts": external_interrupts,
-        "hw_fifo_channels": hw_fifo_channels
+        "hw_fifo_channels": hw_fifo_channels,
     }
 
     return kwargs

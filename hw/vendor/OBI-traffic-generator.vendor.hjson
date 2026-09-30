@@ -8,7 +8,7 @@
 
   upstream: {
     url: "https://github.com/joselumarja/OBI-Traffic-Generator.git"
-    rev: "main"
+    rev: "bb01964a9a06891719df11bd44f20e39948b0ab5"
   }
 
   exclude_from_upstream: []

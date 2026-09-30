@@ -334,34 +334,19 @@ module gr_heep (
       % if (gr_heep["xbar_nmasters"] > 0):
         % if (gr_heep["xbar_nslaves"] > 0):
           .gr_heep_master_req_o(gr_heep_master_req),
-<<<<<<< HEAD
-          .gr_heep_master_resp_i(gr_heep_master_resp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
-        % else:
-          .gr_heep_master_req_o(heep_slave_req),
-          .gr_heep_master_resp_i(heep_slave_rsp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
-=======
           .gr_heep_master_resp_i(gr_heep_master_resp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
         % else:
           .gr_heep_master_req_o(heep_slave_req),
           .gr_heep_master_resp_i(heep_slave_rsp)${'' if ((gr_heep["xbar_nslaves"] + gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
->>>>>>> origin/main
         % endif
       % endif
       % if (gr_heep["xbar_nslaves"] > 0):
         .gr_heep_slave_req_i(gr_heep_slave_req),
-<<<<<<< HEAD
-        .gr_heep_slave_resp_o(gr_heep_slave_resp)${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
-      % endif
-      % if (gr_heep["periph_nslaves"] > 0):
-        .gr_heep_peripheral_req_i(heep_peripheral_req),
-        .gr_heep_peripheral_rsp_o(heep_peripheral_rsp)${'' if ((gr_heep["ext_interrupts"] == 0) and (hw_fifo == 0) and (xif is None)) else ','}
-=======
         .gr_heep_slave_resp_o(gr_heep_slave_resp)${'' if ((gr_heep["periph_nslaves"] + gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
       % endif
       % if (gr_heep["periph_nslaves"] > 0):
         .gr_heep_peripheral_req_i(heep_peripheral_req),
         .gr_heep_peripheral_rsp_o(heep_peripheral_rsp)${'' if ((gr_heep["ext_interrupts"] == 0) and (not hw_fifo) and (xif is None)) else ','}
->>>>>>> origin/main
       % endif
       % if (gr_heep["ext_interrupts"] > 0):
         .gr_heep_peripheral_vec_int_o(ext_int_vector[${gr_heep["ext_interrupts"]-1}:0]),
@@ -382,21 +367,12 @@ module gr_heep (
       % endif
     );
   % endif
-<<<<<<< HEAD
-  
-  % if gr_heep["periph_nslaves"] == 0:
-    assign heep_peripheral_rsp = '0;
-  % endif
-
-  % if hw_fifo == 0:
-=======
 
   % if not (gr_heep["periph_nslaves"] > 0):
     assign heep_peripheral_rsp = '0;
   % endif
 
   % if not hw_fifo:
->>>>>>> origin/main
     assign hw_fifo_done = '0;
     assign hw_fifo_rsp = '0;
   % endif
