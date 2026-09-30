@@ -323,14 +323,6 @@ vivado-fpga-remote-pgm:
 	scp $(BITSTREAM_SOURCE) $(REMOTE):$(REMOTE_DIR)/
 	scp $(HWH_SOURCE) $(REMOTE):$(REMOTE_DIR)/$(BD_NAME)_wrapper.hwh
 
-## Loads the generated bitstream into the remote FPGA 
-## @param FPGA_BOARD=pynq-z2,aup-zu3
-## @param REMOTE=user@host
-## @param REMOTE_DIR=/remote/dir
-vivado-fpga-remote-pgm:
-	scp $(BITSTREAM_SOURCE) $(REMOTE):$(REMOTE_DIR)/
-	scp $(HWH_SOURCE) $(REMOTE):$(REMOTE_DIR)/$(BD_NAME)_wrapper.hwh
-
 ## @section ASIC
 ## Note that for this step you need to provide technology-dependent files (e.g., libs, constraints)
 asic:
