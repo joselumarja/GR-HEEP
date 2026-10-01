@@ -11,7 +11,7 @@
     rev: "2513bbd14d12a202d49e960f3eb51cd34209b6ae"
   }
 
-  //patch_dir: "patches/x-heep"
+  patch_dir: "patches/x-heep"
 
   exclude_from_upstream: [
     ".github"
