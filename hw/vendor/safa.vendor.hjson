@@ -8,7 +8,7 @@
 
   upstream: {
     url: "https://github.com/joselumarja/SAFA.git"
-    rev: "64b701fc37ffbd055c3eb243213b73d7c8872237"
+    rev: "89204f3e92b00638a9a890b675588118286c97f4"
   }
 
   exclude_from_upstream: []
