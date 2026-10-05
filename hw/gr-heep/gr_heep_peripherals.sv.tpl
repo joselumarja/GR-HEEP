@@ -48,6 +48,7 @@ module gr_heep_peripherals
         output logic     gr_heep_peripheral_int_o${'' if (not hw_fifo) and (xif is None) else ','}
     % endif
     % if (hw_fifo):
+        // External peripherals DMA hardware fifo ports
         input xheep_fifo_pkg::xheep_fifo_req_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_req_i,
         output xheep_fifo_pkg::xheep_fifo_rsp_t [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_rsp_o,
         output logic [core_v_mini_mcu_pkg::DMA_CH_NUM-1:0] hw_fifo_done_o${'' if (xif is None) else ','}
